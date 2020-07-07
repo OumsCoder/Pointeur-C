@@ -98,7 +98,6 @@ int main()
     Show_TB(ARRAY2D,lines,columns);
     Free_Memory(ARRAY2D,lines);
 
-    system("pause");
     return 0;
 }
 
