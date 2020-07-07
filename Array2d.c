@@ -79,8 +79,8 @@ void Free_Memory(int **p, int lines){
 
     int ** Allocation(int,int);
     void Read_TB(int **,int,int);
-    void Afficher(int **,int,int);
-    void Liberer(int **,int);
+    void Show_TB(int **,int,int);
+    void Free_Memory(int **,int);
 
 int main()
 {
