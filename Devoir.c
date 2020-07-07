@@ -18,7 +18,6 @@ int main()
     do{
         printf("\n");
         printf("----- USER %d ----- \n", i+1);
-        
         printf("Donner votre nom: ");
         scanf("%s",&nom);
 
@@ -27,27 +26,27 @@ int main()
 
         printf("Donner votre age: ");
         scanf("%d",&age);
-            // Si i=0 alors c'est l'utilisateur 1
-            if(i==0){
-                strcpy(user1.nom,nom);
-                strcpy(user1.prenom,prenom);
-                user1.age = age;
-            }
-            // Si i=1 alors c'est l'utilisateur 2
-            if(i==1){
-                strcpy(user2.nom,nom);
-                strcpy(user2.prenom,prenom);
-                user2.age = age;
-            }
-        i++;
+        // Si i=0 alors c'est l'utilisateur 1
+        if(i==0){
+            strcpy(user1.nom,nom);
+            strcpy(user1.prenom,prenom);
+            user1.age = age;
+        }
+        // Si i=1 alors c'est l'utilisateur 2
+        if(i==1){
+            strcpy(user2.nom,nom);
+            strcpy(user2.prenom,prenom);
+            user2.age = age;
+        }
+            i++;
     }while(i<2);
 
     // Alors le moins agé est user1
-    if(user1.age < user2.age){
+    if(user1.age<user2.age){
         p_User = &user1;
     }
     // Alors le moins agé est user2
-    if(user2.age < user1.age){
+    if(user2.age<user1.age){
         p_User = &user2;
     }
 
