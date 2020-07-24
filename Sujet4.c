@@ -1,67 +1,53 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+typedef struct Note{
+    int note;
+}Note;
+
 typedef struct Matiere{
     char nom[50];
+    Note note[50];
+    int nBNote;
+    int id;
 }Matiere;
 
 typedef struct Eleve{
     char nom[50];
     char prenom[50];
     Matiere matiere[50];
-    int note[50];
     int matricule;
 
     int nBMatiere;
-    int nBNote;
+
 }Eleve;
 
 void showAllStudents(int n,Eleve *students){
-    int i=0,j;
+    int i=0,j,k;
     for(i=0;i<n;i++){
         printf(" Nom : %s \n",students[i].nom);
         printf(" Prenom : %s \n",students[i].prenom);
-        printf(" matricule : %d \n",students[i].matricule);
-        printf("\n");
-        printf("matiere : ");
+        printf(" Matricule : %d \n",students[i].matricule);
+        printf(" Matiere : \n");
         for(j=0;j<students[i].nBMatiere;j++){
             printf(" %s || ",students[i].matiere[j].nom);
+            printf("Notes : ");
+            for(k=0;k<students[i].matiere[j].nBNote;k++){
+                printf(" %d - ",students[i].matiere[j].note[k].note);
+            }
+            printf("\n");
         }
         printf("\n");
-        printf("note : ");
-        for(j=0;j<students[i].nBNote;j++){
-            printf(" %d || ",students[i].note[j]);
-        }
         printf("\n");
     }
 }
 
 // ON SUPOSE QUE LE MATRICULE EST UNIQUE DONC L'ALGORITHME DE RECHERCHE SERA SIMPLIFIE
-
-int miniSEARCH(int matricule,Eleve *students,int n,int *positionFound){
-    int i,found;
-    for(i=0;i<n;i++){
-       if(students[i].matricule=matricule){
-            found=1;
-            *positionFound = i;
-            break;
-       }
-    }
-
-    if(found==0){
-        return 0;
-    }
-
-    if(found==1){
-        return 1;
-    }
-}
-
 void searchStudentsByMatricule(int matricule, Eleve *students,int n){
-    int found=0,i,positionFound=0;
+    int found=0,i,positionFound=0,k,j;
 
     for(i=0;i<n;i++){
-       if(students[i].matricule=matricule){
+       if(students[i].matricule==matricule){
             found=1;
             positionFound = i;
             break;
@@ -69,30 +55,36 @@ void searchStudentsByMatricule(int matricule, Eleve *students,int n){
     }
 
     if(found==0){
-        printf("Ooops , le matricule que vous recherche ne se trouve pas parmis les eleves");
+        printf("OOOOPS , LE MATRICULE QUE VOUS RECHERCHE NE SE TROUVE PAS PARMIS LES ELEVES");
+        printf("\n");
+        printf("\n");
         return 0;
     }
 
-    printf("Les notes du matricule %d sont positionFound :%d \n",matricule,positionFound);
+    printf("---- LES DETAILS SUR LES NOTES DU MATRICULE : %d SONT  --- \n",matricule);
     if(found==1){
-        for(i=0;i<students[positionFound].nBNote;i++){
-            printf(" -- MATIERE : %s || NOTE : %d --  ",students[positionFound].matiere[i].nom,students[positionFound].note[i]);
+        for(j=0;j<students[positionFound].nBMatiere;j++){
+            printf(" %s || ",students[positionFound].matiere[j].nom);
+            printf("notes : ");
+                for(k=0;k<students[positionFound].matiere[j].nBNote;k++){
+                    printf(" %d - ",students[positionFound].matiere[j].note[k].note);
+                }
             printf("\n");
         }
     }
 
 }
 
-void addNotes(int note, int matricule, Eleve * students,char matiere,int n){
-    int foundpt,foundmt,positionFound=0,i,j,found=0;
+void addNotes(int note, int matricule, Eleve * students,int id_matiere,int n){
+    int foundPT,foundMT,positionFound=0,i,j,found=0,nBNote;
 
      for(i=0;i<n;i++){
-       if(students[i].matricule=matricule){
-            foundpt = i;
-            for(j=0;j<students.nBMatiere;i++){
-                if(students[i].matiere[j].nom==matiere){
+       if(students[i].matricule==matricule){
+            foundPT = i;
+            for(j=0;j<students[i].nBMatiere;j++){
+                if(students[i].matiere[j].id==id_matiere){
                     found = 1;
-                    foundmt = j;
+                    foundMT = j;
                 }
             }
             break;
@@ -100,19 +92,60 @@ void addNotes(int note, int matricule, Eleve * students,char matiere,int n){
     }
 
      if(found==0){
-        printf("Ooops , matricule non existant ou nom de la matiere non existant");
+        printf("OOOPS , MATRICULE OU IDENTIFIANT DE LA MATIERE NON EXISTANT");
         return 0;
     }
-
-    students[foundpt].note = note;
+    nBNote = students[foundPT].matiere[foundMT].nBNote;
+    students[foundPT].matiere[foundMT].nBNote += 1;
+    if(found==1){
+        students[foundPT].matiere[foundMT].note[nBNote].note = note;
+        printf("LA NOTE %d A ETE AJOUTER EN %s POUR LE MATRICULE %d",note,students[foundPT].matiere[foundMT].nom,matricule);
+    }
     return 0;
 }
 
-int main()
-{
+void addNewStudents(int n,Eleve *students){
+    int j,k,nBMatiere,id_matiere,nBNote;
+
+        printf("Donner le nom de l'eleve : ");
+        scanf("%s",&students[n].nom);
+        printf("\n");
+        printf("Donner le prenom de l'eleve : ");
+        scanf("%s",&students[n].prenom);
+        printf("\n");
+
+        printf("Combien de matiere a l'eleve : ");
+        scanf("%d",&nBMatiere);
+        students[n].nBMatiere = nBMatiere;
+        printf("\n");
+        for(j=0;j<nBMatiere;j++){
+            printf("Donner le nom de la matiere %d de l'eleve : ",j+1);
+            scanf("%s",&students[n].matiere[j].nom);
+            printf("\n");
+            printf("Donner l'identifiant de la matiere %s de l'eleve (Un Nombre) : ",students[n].matiere[j].nom);
+            scanf("%d",&id_matiere);
+            students[n].matiere[j].id = id_matiere;
+            printf("\n");
+            printf("Combien de note a l'eleve en %s : ",students[n].matiere[j].nom);
+            scanf("%d",&nBNote);
+            students[n].matiere[j].nBNote = nBNote;
+            printf("\n");
+            for(k=0;k<nBNote;k++){
+                    printf("Donner la note %d de l'eleve : ",k+1);
+                    scanf("%d",&students[n].matiere[j].note[k].note);
+                    printf("\n");
+            }
+        }
+
+        printf("Donner le matricule de l'eleve : ");
+        scanf("%d",&students[n].matricule);
+        printf("\n");
+        printf("LE NOUVEL ELEVE A ETE AJOUTE \n");
+}
+
+int main(){
     Eleve *students=NULL;
-    char matiere[50];
-    int N,n,i,nBNote,j,matricule,nBMatiere,note;
+    int N,n,i,nBNote,j,matricule,nBMatiere,note,k,id_matiere;
 
     do{
         printf("Donner le nombre maximum d'eleves que vous desiriez entrer : ");
@@ -144,19 +177,22 @@ int main()
         students[i].nBMatiere = nBMatiere;
         printf("\n");
         for(j=0;j<nBMatiere;j++){
-            printf("Donner la matiere %d de l'eleve : ",j+1);
+            printf("Donner le nom de la matiere %d de l'eleve : ",j+1);
             scanf("%s",&students[i].matiere[j].nom);
             printf("\n");
-        }
-        printf("Combien de note a l'eleve : ");
-        scanf("%d",&nBNote);
-        students[i].nBNote = nBNote;
-        printf("\n");
-        printf("ENTRER RESPECTIVEMENT LES NOTES RELATIVES AU MATIERE \n");
-        for(j=0;j<nBNote;j++){
-            printf("Donner la note %d de l'eleve : ",j+1);
-            scanf("%d",&students[i].note[j]);
+            printf("Donner l'identifiant de la matiere %s de l'eleve (Un Nombre) : ",students[i].matiere[j].nom);
+            scanf("%d",&id_matiere);
+            students[i].matiere[j].id = id_matiere;
             printf("\n");
+            printf("Combien de note a l'eleve en %s : ",students[i].matiere[j].nom);
+            scanf("%d",&nBNote);
+            students[i].matiere[j].nBNote = nBNote;
+            printf("\n");
+            for(k=0;k<nBNote;k++){
+                    printf("Donner la note %d de l'eleve : ",k+1);
+                    scanf("%d",&students[i].matiere[j].note[k].note);
+                    printf("\n");
+            }
         }
 
         printf("Donner le matricule de l'eleve : ");
@@ -164,20 +200,21 @@ int main()
         printf("\n");
     }
     // FONCTION D'AFFICHAGE
-    printf("Listes des eleves : ");
+    printf(" ---- LISTES DES ELEVES ---- \n");
     printf("\n");
     showAllStudents(n,students);
 
-    // FONCTION DE RECHERCHE D'ELEVE PAR SON MATRICULE
-    printf("Recherche un eleves");
     printf("\n");
-    printf("Donner le matricule de l'eleve que vous recherché : ");
+    // FONCTION DE RECHERCHE D'ELEVE PAR SON MATRICULE
+    printf(" ---- RECHERCHER UN ELEVE ---- \n");
+    printf("Donner le matricule de l'eleve que vous recherche : ");
     scanf("%d",&matricule);
     printf("\n");
     searchStudentsByMatricule(matricule,students,n);
 
+    printf("\n");
     // FONCTION D'AJOUT DE NOTE D'ELEVE PAR SON MATRICULE
-    printf("Ajouter un eleves");
+    printf(" ---- AJOUTER UNE NOTE A UN ELEVE ---- \n");
     printf("\n");
     printf("Donner le matricule : ");
     scanf("%d",&matricule);
@@ -185,13 +222,26 @@ int main()
     printf("Donner la note : ");
     scanf("%d",&note);
     printf("\n");
-    printf("Donner la matiere : ");
-    scanf("%s",&matiere);
+    printf("Donner l'identifiant de la matiere : ");
+    scanf("%d",&id_matiere);
     printf("\n");
-    addNotes(note,matricule,students,matiere,n);
+    addNotes(note,matricule,students,id_matiere,n);
+    printf("\n");
+    // FONCTION D'AFFICHAGE
+    printf(" ---- LISTES DES ELEVES ---- \n");
+    printf("\n");
+    showAllStudents(n,students);
+    // FONCTION D'AJOUT D'UN NOUVEL ELEVE
+    printf(" ---- AJOUTER UN NOUVEL ELEVE ---- \n");
+    addNewStudents(n,students);
+    printf("\n");
 
+    printf(" ---- LISTES DES ELEVES ---- \n");
+    printf("\n");
+    showAllStudents(n+1,students);
+
+    system("pause");
   return 0;
 }
-
 
 // AUTHOR : OUMAR ALPHA YAYA CISSE
